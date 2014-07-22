@@ -1,9 +1,9 @@
-## 2Pac
+## geiger
 
 ## Instalación
 
-    $ go get github.com/edmt/2Pac
+    $ go get github.com/edmt/geiger
     
 ## Uso
 
-    $ $GOPATH/bin/2Pac -h
+    $ $GOPATH/bin/geiger -h
