@@ -2,7 +2,7 @@ package main
 
 import (
 	l4g "code.google.com/p/log4go"
-	"github.com/codegangsta/cli"
+	"github.com/docopt/docopt-go"
 	"os"
 	"time"
 )
@@ -14,30 +14,39 @@ func init() {
 }
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "2Pac"
-	app.Usage = ""
-	app.Version = "0.0.0"
+	l4g.Info("Process ID: %d", os.Getpid())
+	usage := `geiger.
 
-	app.Flags = []cli.Flag{
-		cli.StringFlag{"baseDir", "undefined", "Directorio base para iniciar la búsqueda"},
-		cli.StringFlag{"backUpDir", "undefined", "Directorio base para respaldo"},
+Usage:
+  geiger count --path=<path_location> [--rfc=<rfc>] [--date=<date>]
+  geiger -h | --help
+  geiger -v | --version
+
+Options:
+  -h --help     Show this screen.
+  -v --version  Show version.
+  --rfc=<rfc>   RFC filter to reduce the search space [default: *].
+  --date=<date> Date filter to reduce the search space [default: today]. Format: YYYY-MM-DD (zero-padding!)`
+
+	arguments, _ := docopt.Parse(usage, nil, true, "geiger 0.0.0", false)
+	l4g.Debug(arguments)
+	if arguments["count"].(bool) {
+		count(arguments)
 	}
-	app.Action = func(c *cli.Context) {
-		globPatternList := GetGlobPatternList(
-			c.String("baseDir"))
-		l4g.Info("Directorios encontrados: %d", len(globPatternList))
-		for _, globPattern := range globPatternList {
-			files, _ := ListFiles(globPattern)
-			l4g.Info("%d archivos en directorio %s", len(files), globPattern)
-			for _, filePath := range files {
-				l4g.Debug("Procesando archivo: %s", filePath)
-				parseXml(filePath)
-			}
+	l4g.Info("geiger stopped")
+	time.Sleep(time.Second)
+}
+
+func count(options map[string]interface{}) {
+	globPatternList := GetGlobPatternList(options["--path"].(string))
+	l4g.Info("Directorios encontrados: %d", len(globPatternList))
+
+	for _, globPattern := range globPatternList {
+		files, _ := ListFiles(globPattern)
+		l4g.Info("%d archivos en directorio %s", len(files), globPattern)
+		for _, filePath := range files {
+			l4g.Debug("Procesando archivo: %s", filePath)
+			parseXml(filePath)
 		}
 	}
-	l4g.Info("Process ID: %d", os.Getpid())
-	app.Run(os.Args)
-	l4g.Info("%s stopped", app.Name)
-	time.Sleep(time.Second)
 }
