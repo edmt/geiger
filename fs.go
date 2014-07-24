@@ -6,27 +6,38 @@ import (
 	"path/filepath"
 )
 
+const (
+	TRANSACTION_TYPE_FOLDER = "CFDs_Expedidos"
+	FILE_TYPE               = "*.xml"
+)
+
 func ListFiles(globPattern string) (matches []string, err error) {
 	return filepath.Glob(globPattern)
 }
 
-func GetGlobPatternList(baseDir string) (output []string) {
-	rfcList, _ := getRFCList(baseDir)
+func GetGlobPatternList(options map[string]interface{}) (output []string) {
+	baseDir := options["--path"].(string)
+	rfc := options["--rfc"].(string)
+	date := options["--date"]
+	var folder string
+	l4g.Debug(date)
+	if date == nil {
+		folder = FormatAsFolderPath(Today())
+	} else {
+		folder = FormatAsFolderPath(ParseDateOption(date.(string)))
+	}
+	l4g.Debug(folder)
+	rfcList, _ := getRFCList(baseDir, rfc)
 
 	for _, value := range rfcList {
-		l4g.Debug("Probando directorio: %s",
-			filepath.Join(value, "CFDS_Recibidos"))
-		dirExists, _ := exists(filepath.Join(value, "CFDS_Recibidos"))
-		if dirExists {
-			output = append(output,
-				filepath.Join(value, "CFDS_Recibidos", "*", "*", "*", "*.xml"))
-		}
+		output = append(output,
+			filepath.Join(value, TRANSACTION_TYPE_FOLDER, folder, FILE_TYPE))
 	}
 	return
 }
 
-func getRFCList(baseDir string) (matches []string, err error) {
-	return filepath.Glob(filepath.Join(baseDir, "*"))
+func getRFCList(baseDir, rfc string) (matches []string, err error) {
+	return filepath.Glob(filepath.Join(baseDir, rfc))
 }
 
 func exists(path string) (bool, error) {

@@ -38,7 +38,7 @@ Options:
 }
 
 func count(options map[string]interface{}) {
-	globPatternList := GetGlobPatternList(options["--path"].(string))
+	globPatternList := GetGlobPatternList(options)
 	l4g.Info("Directorios encontrados: %d", len(globPatternList))
 
 	for _, globPattern := range globPatternList {
