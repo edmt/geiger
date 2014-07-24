@@ -19,13 +19,7 @@ func GetGlobPatternList(options map[string]interface{}) (output []string) {
 	baseDir := options["--path"].(string)
 	rfc := options["--rfc"].(string)
 	date := options["--date"]
-	var folder string
-	l4g.Debug(date)
-	if date == nil {
-		folder = FormatAsFolderPath(Today())
-	} else {
-		folder = FormatAsFolderPath(ParseDateOption(date.(string)))
-	}
+	folder := FormatAsFolderPath(ParseDateOption(date))
 	l4g.Debug(folder)
 	rfcList, _ := getRFCList(baseDir, rfc)
 

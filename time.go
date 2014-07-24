@@ -16,7 +16,12 @@ func Today() time.Time {
 	return time.Now().AddDate(0, 0, -1).Local()
 }
 
-func ParseDateOption(option string) time.Time {
-	t, _ := time.Parse(PARSE_FORMAT_LAYOUT, option)
+func ParseDateOption(option interface{}) time.Time {
+	var t time.Time
+	if option == nil {
+		t = Today()
+	} else {
+		t, _ = time.Parse(PARSE_FORMAT_LAYOUT, option.(string))
+	}
 	return t
 }
