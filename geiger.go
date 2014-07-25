@@ -46,7 +46,7 @@ func count(options map[string]interface{}) {
 		l4g.Info("%d archivos en directorio %s", len(files), globPattern)
 		for _, filePath := range files {
 			l4g.Debug("Procesando archivo: %s", filePath)
-			parseXml(filePath)
+			CountFile(filePath)
 		}
 	}
 }
