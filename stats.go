@@ -2,21 +2,47 @@ package main
 
 import (
 	l4g "code.google.com/p/log4go"
+	"database/sql"
 	"os"
 	"regexp"
+	"time"
 )
 
-func CountFile(path string) {
-	stats, _ := os.Stat(path)
-	l4g.Debug("Nombre: %s", stats.Name())
-	l4g.Debug("Tamano: %d", stats.Size())
+type GeigerRecord struct {
+	RFC  string
+	Date time.Time
+	Name string
+	Size int64
+	UUID sql.NullString
+}
 
+func CountFile(tuple TupleRFCFilepath) GeigerRecord {
+	stats, _ := os.Stat(tuple.Filepath)
 	expr := regexp.MustCompile("(.{36}).{13}$")
 	matches := expr.FindStringSubmatch(stats.Name())
-	
-	var uuid string
+
+	var uuid sql.NullString
 	if len(matches) == 2 {
-		uuid = matches[1]
+		uuid = sql.NullString{matches[1], true}
 	}
-	l4g.Debug("UUID: %s", uuid)
+	cfdi := GeigerRecord{tuple.Dir.RFC, tuple.Dir.Date, stats.Name(), stats.Size(), uuid}
+	l4g.Debug(cfdi)
+	return cfdi
+}
+
+func (r GeigerRecord) Save(db *sql.DB) {
+	l4g.Debug("Guardando: %s", r)
+	stmt, err := db.Prepare("insert into archivos VALUES(?, ?, ?, ?, ?)")
+	if err != nil {
+		l4g.Error(err)
+	}
+	result, err := stmt.Exec(r.RFC, r.Date, r.Name, r.Size, r.UUID)
+	if err != nil {
+		l4g.Error(err)
+	}
+	rowCount, err := result.RowsAffected()
+	if err != nil {
+		l4g.Error(err)
+	}
+	l4g.Debug("Rows affected = %d\n", rowCount)
 }
