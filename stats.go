@@ -4,7 +4,6 @@ import (
 	l4g "code.google.com/p/log4go"
 	"database/sql"
 	"os"
-	"regexp"
 	"time"
 )
 
@@ -18,13 +17,10 @@ type GeigerRecord struct {
 
 func CountFile(tuple TupleRFCFilepath) GeigerRecord {
 	stats, _ := os.Stat(tuple.Filepath)
-	expr := regexp.MustCompile("(.{36}).{13}$")
-	matches := expr.FindStringSubmatch(stats.Name())
+	doc := parseXml(tuple.Filepath).(Doc)
 
-	var uuid sql.NullString
-	if len(matches) == 2 {
-		uuid = sql.NullString{matches[1], true}
-	}
+	uuid := sql.NullString{doc.Complemento.TimbreFiscalDigital.UUID, true}
+
 	cfdi := GeigerRecord{tuple.Dir.RFC, tuple.Dir.Date, stats.Name(), stats.Size(), uuid}
 	l4g.Debug(cfdi)
 	return cfdi
