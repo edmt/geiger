@@ -62,7 +62,7 @@ func GenCount(options map[string]interface{}) <-chan GeigerRecord {
 			files, _ := ListFiles(globPatternTuple.Path)
 			l4g.Info("%d archivos en directorio %s", len(files), globPatternTuple.Path)
 			for _, filePath := range files {
-				l4g.Debug("Procesando archivo: %s", filePath)
+				l4g.Debug("PROCESA: %s", filePath)
 				out <- CountFile(TupleRFCFilepath{globPatternTuple, filePath})
 			}
 		}

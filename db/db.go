@@ -17,7 +17,7 @@ type ConnectionParameters struct {
 
 // Construye la cadena conexión
 func (cp ConnectionParameters) makeConnectionString() string {
-	return fmt.Sprintf("server=%s;port=%s;user id=%s;password=%s;database=%s;log=2;encrypt=disable",
+	return fmt.Sprintf("server=%s;port=%s;user id=%s;password=%s;database=%s;log=3;encrypt=disable",
 		cp.Host, cp.Port, cp.User, cp.Password, cp.Database)
 }
 

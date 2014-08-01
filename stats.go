@@ -22,23 +22,22 @@ func CountFile(tuple TupleRFCFilepath) GeigerRecord {
 	uuid := sql.NullString{doc.Complemento.TimbreFiscalDigital.UUID, true}
 
 	cfdi := GeigerRecord{tuple.Dir.RFC, tuple.Dir.Date, stats.Name(), stats.Size(), uuid}
-	l4g.Debug(cfdi)
 	return cfdi
 }
 
 func (r GeigerRecord) Save(db *sql.DB) {
-	l4g.Debug("Guardando: %s", r)
+	l4g.Debug("GUARDA: %s", r.Name)
 	stmt, err := db.Prepare("insert into archivos VALUES(?, ?, ?, ?, ?)")
 	if err != nil {
 		l4g.Error(err)
 	}
-	result, err := stmt.Exec(r.RFC, r.Date, r.Name, r.Size, r.UUID)
+	_, err = stmt.Exec(r.RFC, r.Date, r.Name, r.Size, r.UUID)
 	if err != nil {
 		l4g.Error(err)
 	}
-	rowCount, err := result.RowsAffected()
-	if err != nil {
-		l4g.Error(err)
-	}
-	l4g.Debug("Rows affected = %d\n", rowCount)
+	// rowCount, err := result.RowsAffected()
+	// if err != nil {
+	// 	l4g.Error(err)
+	// }
+	// l4g.Debug("Rows affected = %d\n", rowCount)
 }
