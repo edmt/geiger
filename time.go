@@ -21,7 +21,7 @@ func ParseDateOption(option interface{}) time.Time {
 	if option == nil {
 		t = Today()
 	} else {
-		t, _ = time.Parse(PARSE_FORMAT_LAYOUT, option.(string))
+		t, _ = time.Parse(TIME_FORMAT_LAYOUT_AS_FOLDER, option.(string))
 	}
 	return t
 }

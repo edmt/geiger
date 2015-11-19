@@ -9,6 +9,7 @@ import (
 
 type Doc struct {
 	XMLName     xml.Name        `xml:"Comprobante"`
+	Fecha       string          `xml:"fecha,attr"`
 	Complemento CFDIComplemento `xml:"Complemento"`
 }
 

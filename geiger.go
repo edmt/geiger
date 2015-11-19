@@ -28,9 +28,9 @@ Options:
   -h --help     Show this screen.
   -v --version  Show version.
   --rfc=<rfc>   RFC filter to reduce the search space [default: *].
-  --date=<date> Date filter to reduce the search space [default: today]. Format: YYYY-MM-DD (zero-padding!)`
+  --date=<date> Date filter to reduce the search space [default: today]. Format: YYYY/MM/DD (zero-padding!)`
 
-	arguments, _ := docopt.Parse(usage, nil, true, "geiger 0.0.0", false)
+	arguments, _ := docopt.Parse(usage, nil, true, "geiger 1.0.0", false)
 	l4g.Debug(arguments)
 	connectionParamaters := db.ConnectionParameters{
 		Host:     os.Getenv("GCHOST"),
@@ -56,7 +56,7 @@ func GenCount(options map[string]interface{}) <-chan GeigerRecord {
 	out := make(chan GeigerRecord)
 	go func() {
 		globPatternList := GetGlobPatternList(options)
-		l4g.Info("Directorios encontrados: %d", len(globPatternList))
+		l4g.Debug("Directorios encontrados: %s", globPatternList)
 
 		for _, globPatternTuple := range globPatternList {
 			files, _ := ListFiles(globPatternTuple.Path)
