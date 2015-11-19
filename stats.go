@@ -18,10 +18,12 @@ type GeigerRecord struct {
 func CountFile(tuple TupleRFCFilepath) GeigerRecord {
 	stats, _ := os.Stat(tuple.Filepath)
 	doc := parseXml(tuple.Filepath).(Doc)
+	l4g.Debug("This: %s", substr(doc.Fecha, 0, 10))
+	date, _ := time.Parse("2006-01-02", substr(doc.Fecha, 0, 10))
 
 	uuid := sql.NullString{doc.Complemento.TimbreFiscalDigital.UUID, true}
 
-	cfdi := GeigerRecord{tuple.Dir.RFC, tuple.Dir.Date, stats.Name(), stats.Size(), uuid}
+	cfdi := GeigerRecord{tuple.Dir.RFC, date, stats.Name(), stats.Size(), uuid}
 	return cfdi
 }
 

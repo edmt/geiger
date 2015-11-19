@@ -4,7 +4,6 @@ import (
 	l4g "code.google.com/p/log4go"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 const (
@@ -14,7 +13,6 @@ const (
 
 type TupleRFCPath struct {
 	RFC  string
-	Date time.Time
 	Path string
 }
 
@@ -30,18 +28,14 @@ func ListFiles(globPattern string) (matches []string, err error) {
 func GetGlobPatternList(options map[string]interface{}) (output []TupleRFCPath) {
 	baseDir := options["--path"].(string)
 	rfcOption := options["--rfc"].(string)
-	date := options["--date"]
-	parsedDate := ParseDateOption(date)
-	folder := FormatAsFolderPath(parsedDate)
-	l4g.Debug(folder)
+	date := options["--date"].(string)
 	rfcList, _ := getRFCList(baseDir, rfcOption)
 
 	for _, dir := range rfcList {
 		rfc := substr(dir, len(baseDir)+1, 13)
 		l4g.Debug("Substring: %s %d", rfc, len(rfc))
 		t := TupleRFCPath{rfc,
-			parsedDate,
-			filepath.Join(dir, TRANSACTION_TYPE_FOLDER, folder, FILE_TYPE)}
+			filepath.Join(dir, TRANSACTION_TYPE_FOLDER, date, FILE_TYPE)}
 		output = append(output, t)
 	}
 	return
